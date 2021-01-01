@@ -1,10 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-KEYWORDS = ['дизайн', 'фото', 'web', 'python']
 
-
-def parsing(args):
+def parsing(*args):
     posts_list = []
     keywords = args
     URL = "https://habr.com/ru/all/"
@@ -12,7 +10,7 @@ def parsing(args):
     parser = BeautifulSoup(response.text, "html.parser")
     all_posts = parser.find_all("article", class_="post post_preview")
     for previews in all_posts:
-        hubs = previews.find_all("ul", class_="post__hubs inline-list")
+        hubs = previews.find_all("div", class_="post__text_v2")
         hub = list(map(lambda hub: hub.text.strip().lower(), hubs))
         for hub_text in hub:
             if any((d_h in hub_text for d_h in keywords)):
@@ -27,8 +25,9 @@ def parsing(args):
                 posts_link = post["href"]
 
                 posts_list.append(f"{posts_time} - {posts_name} - {posts_link}")
+                break
     return posts_list
 
 
 if __name__ == "__main__":
-    print(parsing(KEYWORDS))
+    print(parsing('поздравляю', 'наступающим', 'слышал'))
